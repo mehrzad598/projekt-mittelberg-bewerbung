@@ -11,8 +11,8 @@ const PORT = process.env.PORT || 3000;
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "bitte-aendern";
 const SESSION_SECRET = process.env.SESSION_SECRET || "bitte-unbedingt-aendern";
 const DATA_FILE = path.join(__dirname, "data", "applications.json");
+const SETTINGS_FILE = path.join(__dirname, "data", "settings.json");
 
-// Railway läuft hinter einem Reverse Proxy. Das ist nötig, damit sichere Session-Cookies funktionieren.
 app.set("trust proxy", 1);
 
 app.use(helmet({
@@ -33,6 +33,25 @@ app.use(session({
     maxAge: 1000 * 60 * 60 * 8
   }
 }));
+
+
+function readSettings() {
+  try {
+    const parsed = JSON.parse(fs.readFileSync(SETTINGS_FILE, "utf8"));
+    return {
+      applicationsOpen: parsed.applicationsOpen !== false,
+      updatedAt: parsed.updatedAt || null
+    };
+  } catch {
+    return { applicationsOpen: true, updatedAt: null };
+  }
+}
+
+function saveSettings(settings) {
+  const temp = `${SETTINGS_FILE}.tmp`;
+  fs.writeFileSync(temp, JSON.stringify(settings, null, 2), "utf8");
+  fs.renameSync(temp, SETTINGS_FILE);
+}
 
 function readApplications() {
   try {
@@ -67,6 +86,10 @@ function requireAdmin(req, res, next) {
 
 app.post("/api/apply", (req, res) => {
   try {
+    const settings = readSettings();
+    if (!settings.applicationsOpen) {
+      return res.status(403).json({ error: "Die Bewerbungsphase ist aktuell geschlossen." });
+    }
     const role = clean(req.body.role, 30);
     const name = clean(req.body.name, 100);
     const discord = clean(req.body.discord, 100);
@@ -128,6 +151,33 @@ app.post("/api/apply", (req, res) => {
   } catch {
     res.status(500).json({ error: "Die Bewerbung konnte nicht gespeichert werden." });
   }
+});
+
+
+app.get("/api/application-status", (req, res) => {
+  const settings = readSettings();
+  res.json({
+    applicationsOpen: settings.applicationsOpen,
+    updatedAt: settings.updatedAt
+  });
+});
+
+app.get("/api/admin/settings", requireAdmin, (req, res) => {
+  res.json(readSettings());
+});
+
+app.patch("/api/admin/settings", requireAdmin, (req, res) => {
+  if (typeof req.body.applicationsOpen !== "boolean") {
+    return res.status(400).json({ error: "Ungültiger Bewerbungsstatus." });
+  }
+
+  const settings = {
+    applicationsOpen: req.body.applicationsOpen,
+    updatedAt: new Date().toISOString()
+  };
+
+  saveSettings(settings);
+  res.json(settings);
 });
 
 app.post("/api/admin/login", (req, res) => {
