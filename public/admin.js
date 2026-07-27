@@ -7,6 +7,9 @@ const refreshBtn=document.getElementById("refreshBtn");
 const statusFilter=document.getElementById("statusFilter");
 const cards=document.getElementById("cards");
 const adminMessage=document.getElementById("adminMessage");
+const applicationToggleBtn=document.getElementById("applicationToggleBtn");
+const applicationStatusText=document.getElementById("applicationStatusText");
+let applicationsOpen=true;
 
 const allCount=document.getElementById("allCount");
 const newCount=document.getElementById("newCount");
@@ -14,6 +17,68 @@ const acceptedCount=document.getElementById("acceptedCount");
 const rejectedCount=document.getElementById("rejectedCount");
 
 let applications=[];
+
+
+function renderApplicationStatus(){
+  applicationStatusText.textContent=applicationsOpen
+    ?"Bewerbungen sind geöffnet. Neue Bewerbungen können gesendet werden."
+    :"Bewerbungen sind geschlossen. Neue Bewerbungen werden blockiert.";
+
+  applicationToggleBtn.textContent=applicationsOpen
+    ?"Bewerbungen schließen"
+    :"Bewerbungen öffnen";
+
+  applicationToggleBtn.className=applicationsOpen
+    ?"btn danger"
+    :"btn primary";
+}
+
+async function loadApplicationSettings(){
+  const response=await fetch("/api/admin/settings",{cache:"no-store"});
+  if(response.status===401){
+    showLogin();
+    return;
+  }
+
+  const result=await response.json();
+  if(!response.ok){
+    adminMessage.className="message error";
+    adminMessage.textContent=result.error||"Bewerbungsstatus konnte nicht geladen werden.";
+    return;
+  }
+
+  applicationsOpen=Boolean(result.applicationsOpen);
+  renderApplicationStatus();
+}
+
+async function toggleApplications(){
+  applicationToggleBtn.disabled=true;
+
+  try{
+    const response=await fetch("/api/admin/settings",{
+      method:"PATCH",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({applicationsOpen:!applicationsOpen})
+    });
+    const result=await response.json();
+
+    if(!response.ok){
+      throw new Error(result.error||"Bewerbungsstatus konnte nicht geändert werden.");
+    }
+
+    applicationsOpen=Boolean(result.applicationsOpen);
+    renderApplicationStatus();
+    adminMessage.className="message ok";
+    adminMessage.textContent=applicationsOpen
+      ?"✓ Bewerbungen wurden geöffnet."
+      :"✓ Bewerbungen wurden geschlossen.";
+  }catch(error){
+    adminMessage.className="message error";
+    adminMessage.textContent=error.message;
+  }finally{
+    applicationToggleBtn.disabled=false;
+  }
+}
 
 function formatDate(value){
   return new Intl.DateTimeFormat("de-DE",{dateStyle:"medium",timeStyle:"short"}).format(new Date(value));
@@ -177,6 +242,7 @@ loginForm.addEventListener("submit",async(event)=>{
 
   loginForm.reset();
   showDashboard();
+  loadApplicationSettings();
   loadApplications();
 });
 
@@ -185,13 +251,15 @@ logoutBtn.addEventListener("click",async()=>{
   showLogin();
 });
 
-refreshBtn.addEventListener("click",loadApplications);
+refreshBtn.addEventListener("click",()=>{loadApplicationSettings();loadApplications();});
+applicationToggleBtn.addEventListener("click",toggleApplications);
 statusFilter.addEventListener("change",render);
 
 (async()=>{
   const me=await fetch("/api/admin/me").then(r=>r.json());
   if(me.loggedIn){
     showDashboard();
+    loadApplicationSettings();
     loadApplications();
   }else{
     showLogin();

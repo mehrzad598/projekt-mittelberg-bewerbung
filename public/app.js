@@ -1,6 +1,32 @@
 const form=document.getElementById("applicationForm");
 const button=document.getElementById("submitBtn");
 const message=document.getElementById("message");
+const closedNotice=document.getElementById("closedNotice");
+
+function setFormEnabled(enabled){
+  for(const element of form.elements){
+    element.disabled=!enabled;
+  }
+  button.disabled=!enabled;
+  closedNotice.hidden=enabled;
+  form.classList.toggle("form-disabled",!enabled);
+}
+
+async function loadApplicationStatus(){
+  try{
+    const response=await fetch("/api/application-status",{cache:"no-store"});
+    const status=await response.json();
+    setFormEnabled(Boolean(status.applicationsOpen));
+
+    if(!status.applicationsOpen){
+      message.className="message error";
+      message.textContent="Die Bewerbungsphase ist aktuell geschlossen.";
+    }
+  }catch{
+    message.className="message error";
+    message.textContent="Der Bewerbungsstatus konnte nicht geladen werden.";
+  }
+}
 
 form.addEventListener("submit",async(event)=>{
   event.preventDefault();
@@ -38,7 +64,13 @@ form.addEventListener("submit",async(event)=>{
   }catch(error){
     message.className="message error";
     message.textContent=error.message;
+
+    if(error.message.includes("geschlossen")){
+      setFormEnabled(false);
+    }
   }finally{
-    button.disabled=false;
+    if(closedNotice.hidden) button.disabled=false;
   }
 });
+
+loadApplicationStatus();
