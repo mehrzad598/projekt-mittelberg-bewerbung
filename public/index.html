@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Offizielle Teambewerbung für Projekt Mittelberg.">
+  <title>Projekt Mittelberg – Teambewerbung</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header class="container nav">
+    <div class="brand"><div class="logo">PM</div><span>Projekt Mittelberg</span></div>
+    <div class="navlinks">
+      <a class="btn" href="#bewerbung">Bewerben</a>
+      <a class="btn" href="/admin">Admin</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container hero-grid">
+        <div>
+          <span class="eyebrow">Teambewerbung geöffnet</span>
+          <h1>Werde Teil von Projekt Mittelberg</h1>
+          <p>Wir suchen zuverlässige Mitglieder für unser Admin- und Supporter-Team. Zeig uns, warum du zu uns passt.</p>
+          <a class="btn primary" href="#bewerbung">Jetzt bewerben</a>
+        </div>
+        <aside class="hero-card">
+          <div class="role-card">
+            <strong>Admin</strong>
+            <p>Moderation, Teamorganisation, Entscheidungen und Verantwortung für den Server.</p>
+          </div>
+          <div class="role-card">
+            <strong>Supporter</strong>
+            <p>Mitgliedern helfen, Fragen beantworten und Probleme freundlich lösen.</p>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section id="bewerbung" class="section">
+      <div class="container">
+        <div class="form-card">
+          <h2>Deine Bewerbung</h2>
+          <form id="applicationForm">
+            <div class="grid">
+              <div class="field">
+                <label for="role">Gewünschte Rolle</label>
+                <select id="role" name="role" required>
+                  <option value="">Bitte auswählen</option>
+                  <option value="Admin">Admin</option>
+                  <option value="Supporter">Supporter</option>
+                </select>
+              </div>
+
+              <div class="field">
+                <label for="age">Altersgruppe</label>
+                <select id="age" name="age" required>
+                  <option value="">Bitte auswählen</option>
+                  <option value="Unter 16">Unter 16</option>
+                  <option value="16–17">16–17</option>
+                  <option value="18 oder älter">18 oder älter</option>
+                </select>
+              </div>
+
+              <div class="field">
+                <label for="name">Name</label>
+                <input id="name" name="name" maxlength="100" required>
+              </div>
+
+              <div class="field">
+                <label for="discord">Discord-Name</label>
+                <input id="discord" name="discord" maxlength="100" placeholder="z. B. milo009357" required>
+              </div>
+
+              <div class="field full">
+                <label for="email">E-Mail-Adresse</label>
+                <input id="email" name="email" type="email" maxlength="254" required>
+              </div>
+
+              <div class="field full">
+                <label for="experience">Welche Erfahrung hast du?</label>
+                <textarea id="experience" name="experience" maxlength="1500" required></textarea>
+              </div>
+
+              <div class="field full">
+                <label for="motivation">Warum möchtest du ins Team?</label>
+                <textarea id="motivation" name="motivation" maxlength="1800" required></textarea>
+              </div>
+
+              <div class="field full">
+                <label for="availability">Wann und wie oft bist du verfügbar?</label>
+                <textarea id="availability" name="availability" maxlength="1000" required></textarea>
+              </div>
+
+              <div class="field full">
+                <label for="extra">Weitere Angaben <span class="hint">Optional</span></label>
+                <textarea id="extra" name="extra" maxlength="1000"></textarea>
+              </div>
+
+              <div class="field full">
+                <label class="check">
+                  <input id="consent" name="consent" type="checkbox" required>
+                  <span>Ich stimme zu, dass meine Angaben zur Bearbeitung der Bewerbung gespeichert werden.</span>
+                </label>
+              </div>
+            </div>
+
+            <p class="note">Trage keine Passwörter, Adresse oder andere besonders private Daten ein.</p>
+            <button id="submitBtn" class="btn primary" type="submit">Bewerbung absenden</button>
+            <div id="message" class="message" aria-live="polite"></div>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">Projekt Mittelberg · Eigenständiges Bewerbungsportal</footer>
+  <script src="/app.js"></script>
+</body>
+</html>

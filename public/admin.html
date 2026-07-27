@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Admin – Projekt Mittelberg</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header class="container nav">
+    <div class="brand"><div class="logo">PM</div><span>Projekt Mittelberg Admin</span></div>
+    <div class="navlinks">
+      <a class="btn" href="/">Bewerbungsseite</a>
+      <button id="logoutBtn" class="btn danger" hidden>Abmelden</button>
+    </div>
+  </header>
+
+  <main class="container admin-wrap">
+    <section id="loginView" class="login-card">
+      <h1 style="font-size:42px">Admin-Login</h1>
+      <p class="note">Melde dich mit dem in Railway eingetragenen Admin-Passwort an.</p>
+      <form id="loginForm">
+        <div class="field">
+          <label for="password">Admin-Passwort</label>
+          <input id="password" name="password" type="password" required>
+        </div>
+        <div style="margin-top:14px">
+          <button class="btn primary" type="submit">Anmelden</button>
+        </div>
+        <div id="loginMessage" class="message"></div>
+      </form>
+    </section>
+
+    <section id="dashboard" hidden>
+      <div class="admin-head">
+        <div>
+          <h1 style="font-size:48px;margin-bottom:6px">Bewerbungen</h1>
+          <div class="note">Ansehen, beantworten, annehmen oder ablehnen.</div>
+        </div>
+        <button id="refreshBtn" class="btn">Aktualisieren</button>
+      </div>
+
+      <div class="stats">
+        <div class="stat"><b id="allCount">0</b><span>Alle</span></div>
+        <div class="stat"><b id="newCount">0</b><span>Neu</span></div>
+        <div class="stat"><b id="acceptedCount">0</b><span>Angenommen</span></div>
+        <div class="stat"><b id="rejectedCount">0</b><span>Abgelehnt</span></div>
+      </div>
+
+      <div class="filters">
+        <label for="statusFilter">Status:</label>
+        <select id="statusFilter">
+          <option value="Alle">Alle</option>
+          <option value="Neu">Neu</option>
+          <option value="In Prüfung">In Prüfung</option>
+          <option value="Angenommen">Angenommen</option>
+          <option value="Abgelehnt">Abgelehnt</option>
+        </select>
+      </div>
+
+      <div id="cards" class="cards"></div>
+      <div id="adminMessage" class="message"></div>
+    </section>
+  </main>
+
+  <script src="/admin.js"></script>
+</body>
+</html>
