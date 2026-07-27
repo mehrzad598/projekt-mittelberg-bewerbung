@@ -12,6 +12,9 @@ const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "bitte-aendern";
 const SESSION_SECRET = process.env.SESSION_SECRET || "bitte-unbedingt-aendern";
 const DATA_FILE = path.join(__dirname, "data", "applications.json");
 
+// Railway läuft hinter einem Reverse Proxy. Das ist nötig, damit sichere Session-Cookies funktionieren.
+app.set("trust proxy", 1);
+
 app.use(helmet({
   contentSecurityPolicy: false
 }));
@@ -22,6 +25,7 @@ app.use(session({
   secret: SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
+  proxy: true,
   cookie: {
     httpOnly: true,
     sameSite: "lax",
