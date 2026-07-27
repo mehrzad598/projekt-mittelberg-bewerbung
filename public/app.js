@@ -2,14 +2,20 @@ const form=document.getElementById("applicationForm");
 const button=document.getElementById("submitBtn");
 const message=document.getElementById("message");
 const closedNotice=document.getElementById("closedNotice");
+const formCard=form.closest(".form-card");
 
 function setFormEnabled(enabled){
   for(const element of form.elements){
     element.disabled=!enabled;
   }
+
   button.disabled=!enabled;
   closedNotice.hidden=enabled;
-  form.classList.toggle("form-disabled",!enabled);
+  form.hidden=!enabled;
+  formCard.classList.toggle("applications-closed",!enabled);
+
+  const heading=formCard.querySelector("h2");
+  if(heading) heading.hidden=!enabled;
 }
 
 async function loadApplicationStatus(){
